@@ -73,7 +73,7 @@ async function searchPosts() {
   try {
     // Construct the full query with the type hashtag
     const typeTag = searchType.value === 'request' ? '#dekobokoRequest' : '#dekobokoHelp';
-
+  
     // If there's a search query, combine it with the type tag. Otherwise, just use the type tag.
     const fullQuery = searchQuery.value.trim()
       ? `${typeTag} ${searchQuery.value.trim()}`
