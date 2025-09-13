@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useAuthStore } from 'stores/auth-store';
 import type { PostView } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
 import PostItem from 'components/PostItem.vue';
@@ -98,5 +98,10 @@ watch(searchType, () => {
   searchResults.value = [];
   error.value = null;
   searchQuery.value = ''; // Also clear the search query
+  void searchPosts(); // Trigger a new search when the search type changes
+});
+
+onMounted(() => {
+  void searchPosts();
 });
 </script>
