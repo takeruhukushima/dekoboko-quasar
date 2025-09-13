@@ -1,43 +1,73 @@
-# dekoboko-quasar (quasar-project)
+# dekoboko
 
-A Quasar Project
+Blueskyの公式APIとデータベースを活用した、スキルマッチングが可能なソーシャルアプリケーションです。
 
-## Install the dependencies
+## 特徴
+
+- **3種類の投稿タイプ**
+  - 通常ポスト
+  - 依頼投稿 (#dekobokoRequest)
+  - ヘルプ投稿 (#dekobokoHelp)
+
+- **スキルマッチング**
+  - 必要スキル・所持スキルを#タグで指定
+  - スキルに基づいた投稿の検索・フィルタリング
+
+- **モダンなUI**
+  - 白を基調としたクリーンなデザイン
+  - 投稿タイプに応じたアイコン・色分け
+  - レスポンシブデザイン（モバイル・Web対応）
+
+## 機能一覧
+
+### 認証・プロフィール
+- Bluesky公式PDSを使用した認証
+- プロフィールでのスキルタグ登録・管理
+
+### 投稿機能
+- 3種類の投稿タイプから選択可能
+- スキルタグのサジェスト機能
+- 投稿へのリアクション・リポスト
+
+### 検索・マッチング
+- 投稿タイプ別の検索
+- スキルタグによる絞り込み
+- 投稿詳細からのプロフィール確認
+
+## 開発環境のセットアップ
+
+### 前提条件
+
+- Node.js 18+
+- Yarn または npm
+- Quasar CLI
+
+### インストール
 
 ```bash
+# 依存パッケージのインストール
 yarn
-# or
+# または
 npm install
-```
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
-
-```bash
+# 開発サーバーの起動
 quasar dev
-```
 
-### Lint the files
-
-```bash
-yarn lint
-# or
-npm run lint
-```
-
-### Format the files
-
-```bash
-yarn format
-# or
-npm run format
-```
-
-### Build the app for production
-
-```bash
+# 本番用ビルド
 quasar build
 ```
 
-### Customize the configuration
+## 技術スタック
 
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
+- **フロントエンド**
+  - Vue 3
+  - TypeScript
+  - Quasar Framework
+
+- **認証・データベース**
+  - AT Protocol (Bluesky)
+  - Bluesky PDS (Personal Data Server)
+
+## ライセンス
+
+このプロジェクトはオープンソースです。詳細は[ライセンスファイル](LICENSE)を参照してください。
