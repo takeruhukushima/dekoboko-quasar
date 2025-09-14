@@ -40,9 +40,18 @@
       <post-item
         v-for="post in searchResults"
         :key="post.uri"
-        :post="{ post }"
+        :post="post"
+        @reply-to-post="handleReplyToPost"
       />
     </q-list>
+
+    <q-dialog v-model="showReplyComposer">
+      <composer-component
+        v-if="replyToPost"
+        :reply-to="replyToPost"
+        @close="showReplyComposer = false"
+      />
+    </q-dialog>
   </q-page>
 </template>
 
@@ -51,6 +60,7 @@ import { ref, watch, onMounted } from 'vue';
 import { useAuthStore } from 'stores/auth-store';
 import type { PostView } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
 import PostItem from 'components/PostItem.vue';
+import ComposerComponent from 'components/ComposerComponent.vue';
 
 const authStore = useAuthStore();
 const searchType = ref('request'); // 'request' or 'help'
@@ -58,6 +68,13 @@ const searchQuery = ref('');
 const searchResults = ref<PostView[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
+const showReplyComposer = ref(false);
+const replyToPost = ref<PostView | undefined>(undefined);
+
+function handleReplyToPost(post: PostView) {
+  replyToPost.value = post;
+  showReplyComposer.value = true;
+}
 
 async function searchPosts() {
   // Do not search if not logged in

@@ -1,7 +1,10 @@
 <template>
   <q-card style="min-width: 400px">
-    <q-card-section>
-      <div class="text-h6">Create Post</div>
+    <q-card-section class="q-pb-none">
+      <div class="text-h6">{{ replyTo ? 'Reply to Post' : 'Create Post' }}</div>
+      <div v-if="replyTo" class="text-caption text-grey q-mt-xs">
+        Replying to @{{ replyTo.author.handle }}
+      </div>
     </q-card-section>
 
     <q-card-section class="q-gutter-md">
@@ -43,14 +46,24 @@
       />
     </q-card-section>
 
-    <q-card-actions align="right">
-      <q-btn flat label="Cancel" v-close-popup />
+    <q-card-actions align="right" class="q-px-md q-pb-md">
+      <q-btn 
+        v-if="!noCancelButton" 
+        flat 
+        label="Cancel" 
+        v-close-popup 
+        @click="$emit('close')" 
+        :disable="isPosting"
+      />
       <q-btn
         color="primary"
-        label="Post"
+        :label="replyTo ? 'Reply' : 'Post'"
         @click="submitPost"
         :loading="isPosting"
         :disable="!postContent.trim()"
+        unelevated
+        no-caps
+        rounded
       />
     </q-card-actions>
   </q-card>
@@ -61,8 +74,14 @@ import { ref } from 'vue';
 import { useAuthStore } from 'stores/auth-store';
 import { useQuasar } from 'quasar';
 import { RichText, type AppBskyRichtextFacet } from '@atproto/api';
+import type { PostView } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'posted']);
+
+const props = defineProps<{ 
+  replyTo?: PostView;
+  noCancelButton?: boolean;
+}>();
 
 const authStore = useAuthStore();
 const $q = useQuasar();
@@ -103,19 +122,41 @@ async function submitPost() {
       text: string;
       facets?: AppBskyRichtextFacet.Main[];
       createdAt: string;
+      reply?: {
+        root: { uri: string; cid: string };
+        parent: { uri: string; cid: string };
+      };
     } = {
       text: rt.text,
       createdAt: new Date().toISOString(),
     };
+
     if (rt.facets) {
       postRecord.facets = rt.facets;
     }
 
+    if (props.replyTo) {
+      postRecord.reply = {
+        root: {
+          uri: props.replyTo.uri,
+          cid: props.replyTo.cid,
+        },
+        parent: {
+          uri: props.replyTo.uri,
+          cid: props.replyTo.cid,
+        },
+      };
+    }
+
     await authStore.agent.post(postRecord);
 
-    $q.notify({ color: 'positive', message: 'Post created successfully!' });
+    $q.notify({ 
+      color: 'positive', 
+      message: props.replyTo ? 'Reply posted successfully!' : 'Post created successfully!' 
+    });
     postContent.value = '';
     skillTags.value = [];
+    emit('posted');
     emit('close');
 
   } catch (error) {
